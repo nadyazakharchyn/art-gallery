@@ -10,6 +10,12 @@ const gallerySchema = mongoose.Schema (
             type: String,
             required: true,
         },
+        arts: [
+            {type: mongoose.Schema.Types.ObjectId, ref: 'Art'}
+        ],
+        bookings: [
+            {type: mongoose.Schema.Types.ObjectId, ref: 'Booking'}
+        ]
     },
     {
         timestamps: false,

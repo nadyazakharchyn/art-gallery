@@ -1,6 +1,6 @@
 import express from 'express';
 import { Art } from '../models/artModel.js';
-
+import { Gallery } from '../models/galleryModel.js';
 const router = express.Router();
 
 // Route for Save a new Art
@@ -17,11 +17,15 @@ router.post('/', async (request, response) => {
     const newArt = {
       title: request.body.title,
       artist: request.body.artist,
-    
+      //gallery: Gallery.findById(request.body.gallery_id),
+      gallery: request.body.gallery_id,
     };
 
     const art = await Art.create(newArt);
-
+    const savedArt = await art.save();
+    const gallery = await Gallery.findById(request.body.gallery_id);
+    gallery.arts.push(savedArt._id);
+    await gallery.save();
     return response.status(201).send(art);
   } catch (error) {
     console.log(error.message);
@@ -63,10 +67,11 @@ router.put('/:id', async (request, response) => {
   try {
     if (
       !request.body.title ||
-      !request.body.author 
+      !request.body.author ||
+      !request.body.gallery_id
     ) {
       return response.status(400).send({
-        message: 'Send all required fields: title, artist',
+        message: 'Send all required fields: title, artist, gallery_id',
       });
     }
 

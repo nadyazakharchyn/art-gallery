@@ -10,6 +10,10 @@ const artSchema = mongoose.Schema (
             type: String,
             required: true,
         },
+        gallery:{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Gallery'
+        }
     },
     {
         timestamps: true,
