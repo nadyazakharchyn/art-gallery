@@ -4,24 +4,24 @@ import { Gallery } from '../models/galleryModel.js';
 import User from '../models/userModel.js';
 
 const createBooking = async (req, res) => {
-    const user_id = `${req.params.user_id}`;
-    const gallery_id = `${req.params.gallery_id}`;
+    //const user_id = `${req.params.user_id}`;
+    //const gallery_id = `${req.params.gallery_id}`;
     try{
         const newBooking = {
             date: req.body.date,
-            gallery: gallery_id,
-            user: user_id,
+            gallery: req.body.gallery_id,
+            user: req.body.user_id,
             status: "Scheduled"
           };
         
         const booking = await Booking.create(newBooking);
         const savedBooking = await booking.save();
 
-        const user = await User.findById(user_id);
+        const user = await User.findById(req.body.user_id);
         user.bookings.push(savedBooking._id);
         await user.save();
 
-        const gallery = await Gallery.findById(gallery_id);
+        const gallery = await Gallery.findById(req.body.gallery_id);
         gallery.bookings.push(savedBooking._id);
         await gallery.save();
         return res.status(201).send(booking);
@@ -33,7 +33,8 @@ const createBooking = async (req, res) => {
 
 const editBooking = async (req, res) => {
     try{
-        const id = `${req.params.booking_id}`;
+       
+        const id = req.params;
         const booking = await Booking.findByIdAndUpdate(id, req.body);
         const savedBooking = await booking.save();
         return res.status(201).send(savedBooking);
@@ -52,7 +53,6 @@ const getBookingsForUser = async(req, res) =>{
         return res.status(404).json({ message: 'User not found' });
         }
 
-    // Populate the 'arts' field in the gallery with the actual art documents
         await user.populate('bookings');
         console.log(user.bookings);
         return res.status(200).json(user.bookings);

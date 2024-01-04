@@ -16,15 +16,6 @@ var corsOptions = {
   credentials: true
 }
 app.use(cors(corsOptions))
-// app.use(function(req, res, next) {
-//   res.header('Access-Control-Allow-Origin', '*');
-//   res.header('Access-Control-Allow-Credentials', true);
-//   res.header(
-//       'Access-Control-Allow-Headers',
-//       'Origin, X-Requested-With, Content-Type, Accept'
-//   );
-//   next();
-// });
 
 app.get('/',(request, response)=>{
     console.log(request);
@@ -35,6 +26,7 @@ app.use('/arts', artRoute);
 app.use('/users', authRoute);
 app.use('/galleries', galleryRoute);
 app.use('/bookings', bookingRoute);
+
 mongoose
   .connect(mongoDBURL)
   .then(() => {

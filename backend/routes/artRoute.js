@@ -6,6 +6,28 @@ const router = express.Router();
 // Route for Save a new Art
 router.post('/', async (request, response) => {
   try {
+    let images = [];
+
+    if (typeof req.body.images === "string") {
+      images.push(req.body.images);
+    } else {
+      images = req.body.images;
+    }
+  
+    const imagesLinks = [];
+  
+    for (let i = 0; i < images.length; i++) {
+      const result = await cloudinary.v2.uploader.upload(images[i], {
+        folder: "arts",
+      });
+  
+      imagesLinks.push({
+        public_id: result.public_id,
+        url: result.secure_url,
+      });
+    }
+    req.body.images = imagesLinks;
+
     if (
       !request.body.title ||
       !request.body.artist 
@@ -17,8 +39,8 @@ router.post('/', async (request, response) => {
     const newArt = {
       title: request.body.title,
       artist: request.body.artist,
-      //gallery: Gallery.findById(request.body.gallery_id),
       gallery: request.body.gallery_id,
+      images: req.body.images
     };
 
     const art = await Art.create(newArt);

@@ -13,7 +13,19 @@ const artSchema = mongoose.Schema (
         gallery:{
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Gallery'
-        }
+        },
+        images: [
+            {
+              public_id: {
+                type: String,
+                required: true,
+              },
+              url: {
+                type: String,
+                required: true,
+              },
+            },
+          ],
     },
     {
         timestamps: true,

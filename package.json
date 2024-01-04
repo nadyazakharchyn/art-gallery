@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "cloudinary": "^1.41.1",
+    "notistack": "^3.0.1"
+  }
+}

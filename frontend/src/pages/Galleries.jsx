@@ -40,7 +40,7 @@ const Galleries = () => {
                 {/* <th className='border border-slate-600 rounded ms'>No</th> */}
                 <th className='border border-slate-600 rounded ms'>Title</th>
                 <th className='border border-slate-600 rounded ms'>Address</th>
-                <th className='border border-slate-600 rounded ms'>Operations</th>
+                <th className='border border-slate-600 rounded ms'>Artworks</th>
               </tr>
             </thead>
             <tbody>

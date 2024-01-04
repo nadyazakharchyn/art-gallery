@@ -3,8 +3,11 @@ import { createBooking, editBooking, getBookingsForUser, getBookingsForGallery, 
 import { isAuthenticatedUser, protect } from '../middleware/authMiddleware.js'
 const router = express.Router();
 
+// router
+//   .route("/:gallery_id/:user_id")
+//   .post(createBooking);
 router
-  .route("/:gallery_id/:user_id")
+  .route("/")
   .post(createBooking);
 router
   .route("/:booking_id")
