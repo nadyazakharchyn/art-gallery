@@ -20,25 +20,37 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post(
-        "http://localhost:5555/users/login",
-        {
-          email, password
-        },
-        { withCredentials: true }
-      );
+      axios
+      .post(`http://localhost:5555/users/login`,
+      {
+        email, password
+      },
+      { withCredentials: true })
+      .then((response) => {
+        console.log(response.data);
+        const data = response.data;
+        console.log(data);
+      //console.log(message);
+        if (data) {
+          //handleSuccess(message);
+          setTimeout(() => {
+            navigate("/");
+          }, 1000);
+        } else {
+          //handleError();
+          console.log('Hi. I am your error')
+          }
+      });
+      // const { data } = await axios.post(
+      //   "http://localhost:5555/users/login",
+      //   {
+      //     email, password
+      //   },
+      //   { withCredentials: true }
+      // );
       
-      const { success, message } = data;
-      console.log(success);
-      console.log(message);
-      if (success) {
-        handleSuccess(message);
-        setTimeout(() => {
-          navigate("/");
-        }, 1000);
-      } else {
-        handleError(message);
-      }
+      //const { success, message } = data;
+      
     } catch (error) {
       console.log(error);
     }

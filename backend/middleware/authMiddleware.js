@@ -1,50 +1,49 @@
 import jwt from 'jsonwebtoken';
-import asyncHandler from 'express-async-handler';
 import User from '../models/userModel.js';
+import { JWT_SECRET } from "../config.js";
 
-const protect = asyncHandler(async (req, res, next) => {
+const protect =  async(req, res, next) => {
   let token;
-
-  token = req.cookies.jwt;
+  token = req.cookies.token;
   console.log(token);
   if (token) {
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const decoded = jwt.verify(token, JWT_SECRET);
       req.user = await User.findById(decoded.id).select('-password');
       next();
     } catch (error) {
-      console.error(error);
-      res.status(401);
-      throw new Error('Not authorized, token failed');
+      console.log(error);
+      res.status(401).json({message: 'Not authorized, token failed'});
+      //throw new Error('Not authorized, token failed');
     }
   } else {
-    res.status(401);
-    throw new Error('Not authorized, no token');
+    res.status(401).json({message: 'Not authorized, no token'});
+    //throw new Error('Not authorized, no token');
   }
-});
+};
 
-const isAuthenticatedUser = asyncHandler(async (req, res, next) => {
-  //const { token } = req.cookies;
-  const token = req.cookies.jwt;
+// const isAuthenticatedUser = (async (req, res, next) => {
+//   //const { token } = req.cookies;
+//   const token = req.cookies.jwt;
   
-  //console.log(token);
-  if (!token) {
-    return res.status(401).json({ message: 'Please login to access this resource' });
-  }
+//   //console.log(token);
+//   if (!token) {
+//     return res.status(401).json({ message: 'Please login to access this resource' });
+//   }
 
-  try {
-    const decodedData = jwt.verify(token, process.env.JWT_SECRET);
-    console.log(decodedData);
-    // Add the user object to the request for further use in the controller
-    req.user = decodedData.user;
-    next();
-  } catch (error) {
-    res.status(401).json({ message: 'Token is not valid.' });
-  }
-  //req.user = await User.findById(decodedData.id);
+//   try {
+//     const decodedData = jwt.verify(token, process.env.JWT_SECRET);
+    
+//     // Add the user object to the request for further use in the controller
+//     req.user = decodedData.user;
+//     next();
+//   } catch (error) {
+//     res.status(401).json({ message: 'Token is not valid.' });
+//   }
+//   //req.user = await User.findById(decodedData.id);
 
   
-});
+// });
 
 const authorizeRoles = (...roles) => {
   return (req, res, next) => {
@@ -61,4 +60,4 @@ const authorizeRoles = (...roles) => {
   };
 };
 
-export { protect, isAuthenticatedUser, authorizeRoles };
+export { protect, authorizeRoles };

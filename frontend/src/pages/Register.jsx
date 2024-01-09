@@ -6,22 +6,9 @@ import { ToastContainer, toast } from "react-toastify";
 
 const Registration = () => {
     const navigate = useNavigate();
-    // const [inputValue, setInputValue] = useState({
-    //     name: "",
-    //     email: "",
-    //     password: "",
-    // });
-    // const { name, email, password } = inputValue;
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    // const handleOnChange = (e) => {
-    //     const { name, value } = e.target;
-    //     setInputValue({
-    //     ...inputValue,
-    //     [name]: value,
-    //     });
-    // };
 
     const handleError = (err) =>
         toast.error(err, {
@@ -35,25 +22,40 @@ const Registration = () => {
         
     const handleSubmit = async (e) => {
         e.preventDefault();
-        // input_val = {
-        // name: "",
-        // email: "",
-        // password: "",
-        // }
         try {
-        const { data } = await axios.post(
-            "http://localhost:5555/users/register",
-            name, email, password
-        );
-        const { success, message } = data;
-        if (success) {
-            handleSuccess(message);
-            setTimeout(() => {
-            navigate("/");
-            }, 1000);
-        } else {
-            handleError(message);
-        }
+            axios
+            .post(`http://localhost:5555/users/register`,
+            {
+                name, email, password
+            },
+            { withCredentials: true })
+            .then((response) => {
+                console.log(response.data);
+                const data = response.data;
+                console.log(data);
+                if (data) {
+                setTimeout(() => {
+                    navigate("/");
+                }, 1000);
+                } else {
+                //handleError();
+                console.log('Hi. I am your error')
+                }
+            });
+
+        // const { data } = await axios.post(
+        //     "http://localhost:5555/users/register",
+        //     name, email, password
+        // );
+        // const { success, message } = data;
+        // if (success) {
+        //     handleSuccess(message);
+        //     setTimeout(() => {
+        //     navigate("/");
+        //     }, 1000);
+        // } else {
+        //     handleError(message);
+        // }
         } catch (error) {
         console.log(error);
         };

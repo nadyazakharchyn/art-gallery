@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Spinner from '../components/Spinner';
+import { useCookies } from "react-cookie";
 import { Link, useNavigate } from 'react-router-dom';
 import Modal from '../components/Modal';
 import ModalPage from './ModalPage';
@@ -11,7 +12,7 @@ import { useParams } from 'react-router-dom';
 const Bookings = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(false);
-  
+  const [cookies, removeCookie] = useCookies([]);
   const [modalShow, setModalShow] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate(); 
@@ -20,7 +21,7 @@ const Bookings = () => {
   useEffect(() => {
     setLoading(true);
     axios
-      .get(`http://localhost:5555/users/profile/${id}`)
+      .get(`http://localhost:5555/users/profile/${id}`, { withCredentials: true })
       .then((response) => {
         setUser(response.data.name);
       })
@@ -28,7 +29,7 @@ const Bookings = () => {
         console.log(error);
       });
     axios
-      .get(`http://localhost:5555/bookings/user/${id}/`)
+      .get(`http://localhost:5555/bookings/user/${id}/`, { withCredentials: true })
       .then(async (response) => {
         const bookingsWithGalleryTitles = await Promise.all(
           response.data.map(async (booking) => {

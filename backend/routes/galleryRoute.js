@@ -3,6 +3,7 @@ import { createGallery,
     getGalleries,
     getGalleryArts, 
     getGalleryById} from '../controllers/galleryController.js';
+import { protect, authorizeRoles } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 router
@@ -11,7 +12,9 @@ router
 router
   .route("/")
   .get(getGalleries);
-router.get ("/:id/arts", getGalleryArts);
+router
+    .route("/:id/arts")  
+    .get (protect, authorizeRoles("admin"), getGalleryArts);
 router
   .route("/:id")
   .get(getGalleryById);
