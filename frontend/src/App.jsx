@@ -10,6 +10,8 @@ import Login from './pages/Login.jsx';
 import Registration from "./pages/Register.jsx";
 import Bookings from "./pages/Bookings.jsx";
 import CreateBooking from "./pages/CreateBooking.jsx";
+import EditBooking from "./pages/EditBooking.jsx";
+import GalleryBookings from "./pages/GalleryBookings.jsx";
 
 const App = () => {
   return (
@@ -24,6 +26,8 @@ const App = () => {
       <Route path='/users/register/' element={<Registration />} />
       <Route path='/bookings/user/:id/' element={<Bookings />} />
       <Route path='/bookings/:user_id/' element={<CreateBooking />} />
+      <Route path='/bookings/edit/:id' element={<EditBooking />} />
+      <Route path='/bookings/gallery/:id' element={<GalleryBookings />} />
     </Routes>
   )
 };

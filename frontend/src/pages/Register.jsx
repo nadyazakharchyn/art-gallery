@@ -61,10 +61,10 @@ const Registration = () => {
 
     return (
         <div className="form_container">
-        <h2>Register Account</h2>
+        <h2 className='text-3xl my-8'>Register Account</h2>
         <form onSubmit={handleSubmit}>
-            <div>
-            <label htmlFor="email">Email</label>
+            <div className='my-4'>
+            <label className='text-xl mr-4 text-gray-500' htmlFor="email">Email</label>
             <input
                 type="email"
                 name="email"
@@ -73,8 +73,8 @@ const Registration = () => {
                 onChange={(e) => setEmail(e.target.value)}
             />
             </div>
-            <div>
-            <label htmlFor="name">Name</label>
+            <div className='my-4'>
+            <label className='text-xl mr-4 text-gray-500' htmlFor="name">Name</label>
             <input
                 type="text"
                 name="name"
@@ -83,8 +83,8 @@ const Registration = () => {
                 onChange={(e) => setName(e.target.value)}
             />
             </div>
-            <div>
-            <label htmlFor="password">Password</label>
+            <div className='my-4'>
+            <label className='text-xl mr-4 text-gray-500' htmlFor="password">Password</label>
             <input
                 type="password"
                 name="password"
@@ -93,7 +93,7 @@ const Registration = () => {
                 onChange={(e) => setPassword(e.target.value)}
             />
             </div>
-            <button type="submit">Submit</button>
+            <button className='p-2 bg-sky-300 m-8' type="submit">Submit</button>
             <span>
             Already have an account? <Link to={"users/login"}>Login</Link>
             </span>

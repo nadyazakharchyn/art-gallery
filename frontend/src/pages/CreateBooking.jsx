@@ -1,3 +1,5 @@
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css'; 
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import BackButton from '../components/BackButton';
@@ -12,6 +14,16 @@ const CreateBooking = () => {
   const [selectedGallery, setSelectedGallery] = useState('');
   const [bookingDate, setBookingDate] = useState('');
   const navigate = useNavigate();
+
+// Function to check if a date is a Monday
+const isMonday = (date) => {
+  return date.getDay() === 1; // Sunday is 0, Monday is 1, and so on
+};
+
+// Function to filter out Mondays
+const filterMondays = (date) => {
+  return !isMonday(date);
+};
 
   useEffect(() => {
     setLoading(true);
@@ -54,8 +66,6 @@ const CreateBooking = () => {
         console.log('Booking created', response.data);
         setLoading(false);
         showNotification("Booking Submitted");
-        // Optionally, you can redirect the user after submitting the form
-        // navigate('/success'); // Replace '/success' with your desired success page
       })
       .catch((error) => {
         console.log(error);
@@ -74,6 +84,12 @@ const CreateBooking = () => {
       });
     }
   };
+  // Function to get the date two months from today
+  const getTwoMonthsFromToday = () => {
+    const today = new Date();
+    today.setMonth(today.getMonth() + 2);
+    return today;
+  };
 
   return (
     <div className='p-4'>
@@ -91,8 +107,13 @@ const CreateBooking = () => {
         </div>
         <div>
           <label className='text-xl mr-4 text-gray-500' htmlFor="date">Date:</label>
-          <input type="date" id="date" name="date" value={bookingDate.date} onChange={handleDateChange} min={getFormattedDate(new Date())}
-            max="2024-02-28"/>
+          <DatePicker 
+          selected={bookingDate} onChange={(date) => setBookingDate(date)} 
+          filterDate={filterMondays} // Apply the filter function
+          placeholderText="Select a date"
+          value={bookingDate.date} minDate={new Date()}
+          maxDate={getTwoMonthsFromToday()}
+          />
         </div>
         <button className='p-2 bg-sky-300 m-8' type="submit">Create Booking</button>
       </form>

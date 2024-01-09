@@ -1,6 +1,8 @@
 {
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "cloudinary": "^1.41.1",
-    "notistack": "^3.0.1"
+    "notistack": "^3.0.1",
+    "react-datepicker": "^4.25.0"
   }
 }

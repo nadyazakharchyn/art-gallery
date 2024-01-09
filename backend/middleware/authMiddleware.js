@@ -25,17 +25,25 @@ const protect = asyncHandler(async (req, res, next) => {
 
 const isAuthenticatedUser = asyncHandler(async (req, res, next) => {
   //const { token } = req.cookies;
-  const token = req.headers.authorization;
+  const token = req.cookies.jwt;
+  
   //console.log(token);
   if (!token) {
     return res.status(401).json({ message: 'Please login to access this resource' });
   }
 
-  const decodedData = jwt.verify(token, process.env.JWT_SECRET);
+  try {
+    const decodedData = jwt.verify(token, process.env.JWT_SECRET);
+    console.log(decodedData);
+    // Add the user object to the request for further use in the controller
+    req.user = decodedData.user;
+    next();
+  } catch (error) {
+    res.status(401).json({ message: 'Token is not valid.' });
+  }
+  //req.user = await User.findById(decodedData.id);
 
-  req.user = await User.findById(decodedData.id);
-
-  next();
+  
 });
 
 const authorizeRoles = (...roles) => {

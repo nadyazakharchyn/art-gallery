@@ -1,4 +1,6 @@
 import express from 'express';
+import mongoose from "mongoose";
+
 import { Booking } from '../models/bookingModel.js';
 import { Gallery } from '../models/galleryModel.js';
 import User from '../models/userModel.js';
@@ -31,16 +33,57 @@ const createBooking = async (req, res) => {
     }
 }
 
+const getBookingById = async (req, res) => {
+  try {
+    const id  = req.params.id;
+    const booking = await Booking.findById(id);
+    return res.status(200).json(booking);
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).send({ message: error.message });
+  }
+}
+
 const editBooking = async (req, res) => {
-    try{
+    // try{
        
-        const id = req.params;
-        const booking = await Booking.findByIdAndUpdate(id, req.body);
-        const savedBooking = await booking.save();
-        return res.status(201).send(savedBooking);
-    } catch (error){
-        console.log(error.message);
-        res.status(500).send({ message: error.message });
+    //     const id = req.params;
+    //     const booking = await Booking.findByIdAndUpdate(id, req.body);
+    //     const savedBooking = await booking.save();
+    //     return res.status(201).send(savedBooking);
+    // } catch (error){
+    //     console.log(error.message);
+    //     res.status(500).send({ message: error.message });
+    // }
+    try {
+      const id = req.params.booking_id; // Assuming your booking ID parameter is named "booking_id"
+      const updatedFields = req.body;
+  
+      // Validate if the booking ID is valid
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ message: 'Invalid booking ID' });
+      }
+  
+      // Find the existing booking by ID
+      const booking = await Booking.findById(id);
+  
+      // Check if the booking exists
+      if (!booking) {
+        return res.status(404).json({ message: 'Booking not found' });
+      }
+  
+      // Update only the fields that are present in the request body
+      Object.keys(updatedFields).forEach((field) => {
+        booking[field] = updatedFields[field];
+      });
+  
+      // Save the updated booking
+      const savedBooking = await booking.save();
+  
+      return res.status(200).json(savedBooking);
+    } catch (error) {
+      console.log(error.message);
+      res.status(500).json({ message: error.message });
     }
 }
 
@@ -49,9 +92,13 @@ const getBookingsForUser = async(req, res) =>{
         const id = `${req.params.user_id}`;
         const user = await User.findById(id);
 
-        if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-        }
+        // if (!user) {
+        // return res.status(404).json({ message: 'User not found' });
+        // }
+        // // Ensure the user making the request matches the authenticated user
+        // if (user.id !== req.user.id) {
+        //   return res.status(403).json({ message: 'Access denied. User does not have permission.' });
+        // }
 
         await user.populate('bookings');
         console.log(user.bookings);
@@ -100,5 +147,6 @@ export{
     editBooking,
     getBookingsForUser,
     getBookingsForGallery, 
-    myBookings
+    myBookings, 
+    getBookingById
 }
