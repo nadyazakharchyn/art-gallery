@@ -7,7 +7,7 @@ import { JWT_SECRET } from "../config.js";
 
 const authUser = async (req, res) => {
   const { email, password } = req.body;
-  console.log(password);
+  //console.log(password);
   try{
     const user = await User.findOne({ email });
     console.log(user.password)
@@ -34,6 +34,40 @@ const authUser = async (req, res) => {
   }
 };
 
+const getUserFromToken = async (req, res, next) => {
+  let token;
+  token = req.cookies.token; // Retrieve the token from the 'token' cookie
+  //token = req.params.token;
+  console.log(token); // Log the token for debugging purposes
+
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, JWT_SECRET);
+      // Fetch the user ID from the decoded token
+      console.log(decoded);
+      const userId = decoded.userId;
+      console.log(userId);
+      // Fetch the user details from the database bvased on the user ID
+      const user = await User.findById(userId).select('-password');
+      if (!user) {
+        return res.status(401).json({ message: 'Not authorized, user not found' });
+      }
+      // Attach the user object to the request object
+      //req.user = user;
+      console.log(user)
+      res.json({user})
+      next();
+    } catch (error) {
+      // If there's an error while decoding or verifying the token, handle it
+      console.log(error);
+      res.status(401).json({ message: 'Not authorized, token failed' });
+    }
+  } else {
+    // If there's no token in the request, respond with a 401 status and an error message
+    res.status(401).json({ message: 'Not authorized, no token' });
+  }
+};
+
 const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -55,7 +89,7 @@ const registerUser = async (req, res) => {
 
 
 const logoutUser = (req, res) => {
-  res.cookie('jwt', '', {
+  res.cookie('token', '', {
     httpOnly: true,
     expires: new Date(0),
   });
@@ -78,9 +112,7 @@ const getUserProfile = async (req, res) => {
   }
 };
 
-// @desc    Update user profile
-// @route   PUT /api/users/profile
-// @access  Private
+
 const updateUserProfile = async (req, res) => {
   const user = await User.findById(req.params.id);
 
@@ -110,4 +142,5 @@ export {
   logoutUser,
   getUserProfile,
   updateUserProfile,
+  getUserFromToken
 };

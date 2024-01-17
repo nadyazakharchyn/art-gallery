@@ -12,26 +12,27 @@ const GalleryBookings = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
-  const navigate = useNavigate(); // Hook for programmatic navigation
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     setLoading(true);
     axios
-      .get(`http://localhost:5555/bookings/gallery/${id}/`)
-      .then(async (response) => {
-        const bookingsWithUsers = await Promise.all(
-          response.data.map(async (booking) => {
-            const userDetails = await getUserDetails(booking.user);
-            return { ...booking, user: userDetails.name };
-          })
-        );
-        setBookings(bookingsWithUsers);
+      .get(`http://localhost:5555/bookings/gallery/${id}/`, { withCredentials: true })
+      .then( (response) => {
+        // const bookingsWithUsers = await Promise.all(
+        //   response.data.map(async (booking) => {
+        //     const userDetails = await getUserDetails(booking.user);
+        //     return { ...booking, user: userDetails.name };
+        //   })
+        // );
+        setBookings(response.data);
         setLoading(false);
       })
       .catch((error) => {
         console.log(error);
         setLoading(false);
       });
+
   }, [id]);
 
   const getUserDetails = async (userId) => {

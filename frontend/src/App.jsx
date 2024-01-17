@@ -12,6 +12,7 @@ import Bookings from "./pages/Bookings.jsx";
 import CreateBooking from "./pages/CreateBooking.jsx";
 import EditBooking from "./pages/EditBooking.jsx";
 import GalleryBookings from "./pages/GalleryBookings.jsx";
+import Profile from "./pages/Profile.jsx";
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
       <Route path='/bookings/:user_id/' element={<CreateBooking />} />
       <Route path='/bookings/edit/:id' element={<EditBooking />} />
       <Route path='/bookings/gallery/:id' element={<GalleryBookings />} />
+      <Route path='/users/profile/:id' element={<Profile />} />
     </Routes>
   )
 };

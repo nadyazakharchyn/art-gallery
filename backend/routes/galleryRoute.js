@@ -14,7 +14,7 @@ router
   .get(getGalleries);
 router
     .route("/:id/arts")  
-    .get (protect, authorizeRoles("admin"), getGalleryArts);
+    .get (getGalleryArts);
 router
   .route("/:id")
   .get(getGalleryById);

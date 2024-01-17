@@ -5,6 +5,7 @@ import {
   logoutUser,
   getUserProfile,
   updateUserProfile,
+  getUserFromToken
 } from '../controllers/authController';
 import { protect, authorizeRoles } from '../middleware/authMiddleware.js';
 
@@ -17,5 +18,10 @@ router
   .route('/profile/:id')
   .get(protect, getUserProfile)
   .put(protect, updateUserProfile);
-
+// router.get('/user/token', getUserFromToken, (req, res) => {
+//     //const user = req.user;
+//     //console.log(user)
+//     //res.json({ user });
+//   });
+router.get('/user/token', getUserFromToken)
 export default router;

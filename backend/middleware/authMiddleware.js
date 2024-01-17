@@ -5,59 +5,107 @@ import { JWT_SECRET } from "../config.js";
 const protect =  async(req, res, next) => {
   let token;
   token = req.cookies.token;
-  console.log(token);
+  //console.log(token);
   if (token) {
     try {
       const decoded = jwt.verify(token, JWT_SECRET);
+      //console.log(decoded);
       req.user = await User.findById(decoded.id).select('-password');
       next();
     } catch (error) {
       console.log(error);
       res.status(401).json({message: 'Not authorized, token failed'});
-      //throw new Error('Not authorized, token failed');
     }
   } else {
     res.status(401).json({message: 'Not authorized, no token'});
-    //throw new Error('Not authorized, no token');
   }
 };
 
-// const isAuthenticatedUser = (async (req, res, next) => {
-//   //const { token } = req.cookies;
-//   const token = req.cookies.jwt;
-  
-//   //console.log(token);
-//   if (!token) {
-//     return res.status(401).json({ message: 'Please login to access this resource' });
-//   }
+const getUserFromToken = async (req, res, next) => {
+  let token;
+  token = req.cookies.token; // Retrieve the token from the 'token' cookie
+  //token = req.params.token;
+  console.log(token); // Log the token for debugging purposes
 
-//   try {
-//     const decodedData = jwt.verify(token, process.env.JWT_SECRET);
-    
-//     // Add the user object to the request for further use in the controller
-//     req.user = decodedData.user;
-//     next();
-//   } catch (error) {
-//     res.status(401).json({ message: 'Token is not valid.' });
-//   }
-//   //req.user = await User.findById(decodedData.id);
-
-  
-// });
-
-const authorizeRoles = (...roles) => {
-  return (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
-      return next(
-        new ErrorHander(
-          `Role: ${req.user.role} is not allowed to access this resouce `,
-          403
-        )
-      );
+  if (token) {
+    try {
+      const decoded = jwt.verify(token, JWT_SECRET);
+      // Fetch the user ID from the decoded token
+      console.log(decoded);
+      const userId = decoded.userId;
+      console.log(userId);
+      // Fetch the user details from the database bvased on the user ID
+      const user = await User.findById(userId).select('-password');
+      if (!user) {
+        res.status(401).json({ message: 'Not authorized, user not found' });
+      }
+      // Attach the user object to the request object
+      //req.user = user;
+      console.log(user)
+      res.json({user})
+      next();
+    } catch (error) {
+      // If there's an error while decoding or verifying the token, handle it
+      console.log(error);
+      res.status(401).json({ message: 'Not authorized, token failed' });
     }
+  } else {
+    // If there's no token in the request, respond with a 401 status and an error message
+    res.status(401).json({ message: 'Not authorized, no token' });
+  }
+};
 
-    next();
+// const authorizeRoles = (...roles) => {
+  
+//   return (req, res, next) => {
+//     console.log(req.user)
+//     if (!roles.includes(req.user.role)) {
+//       return next(
+//         new ErrorHandler(
+//           `Role: ${req.user.role} is not allowed to access this resouce `,
+//           403
+//         )
+//       );
+//     }
+//     next();
+//   };
+// };
+const authorizeRoles = (...roles) => {
+  return async (req, res, next) => {
+    try {
+      // Get token from cookies
+      const token = req.cookies.token;
+      console.log(token)
+      if (!token) {
+        res.status(401).json({message: 'Not authorized, no token'});
+      }
+      // Verify the token and get user details
+      const decoded = jwt.verify(token, JWT_SECRET);
+      console.log(decoded)
+      const user = await User.findById(decoded.userId).select('-password');
+      console.log(user);
+      if (!user) {
+        // return next(
+        //   new ErrorHandler('Not authorized, user not found', 401)
+        // );
+        res.status(401).json({message: 'Not authorized, user not found'});
+      }
+      // Check if user's role is allowed
+      if (!roles.includes(user.role)) {
+        // return next(
+        //   new ErrorHandler(`Role: ${user.role} is not allowed to access this resource`, 403)
+        // );
+        res.status(401).json({message: 'Not authorized to access this resource'});
+      }
+
+      // Set user details in the request object for further use
+      req.user = user;
+      next();
+    } catch (error) {
+      console.log(error);
+      //res.status(401).json({ message: 'Not authorized, token failed' });
+    }
   };
 };
 
-export { protect, authorizeRoles };
+export { protect, authorizeRoles, getUserFromToken };

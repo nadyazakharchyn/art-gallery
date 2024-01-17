@@ -6,8 +6,6 @@ import { Gallery } from '../models/galleryModel.js';
 import User from '../models/userModel.js';
 
 const createBooking = async (req, res) => {
-    //const user_id = `${req.params.user_id}`;
-    //const gallery_id = `${req.params.gallery_id}`;
     try{
         const newBooking = {
             date: req.body.date,
@@ -45,21 +43,9 @@ const getBookingById = async (req, res) => {
 }
 
 const editBooking = async (req, res) => {
-    // try{
-       
-    //     const id = req.params;
-    //     const booking = await Booking.findByIdAndUpdate(id, req.body);
-    //     const savedBooking = await booking.save();
-    //     return res.status(201).send(savedBooking);
-    // } catch (error){
-    //     console.log(error.message);
-    //     res.status(500).send({ message: error.message });
-    // }
     try {
-      const id = req.params.booking_id; // Assuming your booking ID parameter is named "booking_id"
+      const id = req.params.booking_id;
       const updatedFields = req.body;
-  
-      // Validate if the booking ID is valid
       if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(400).json({ message: 'Invalid booking ID' });
       }
@@ -92,16 +78,8 @@ const getBookingsForUser = async(req, res) =>{
         const id = `${req.params.user_id}`;
         const user = await User.findById(id);
 
-        // if (!user) {
-        // return res.status(404).json({ message: 'User not found' });
-        // }
-        // // Ensure the user making the request matches the authenticated user
-        // if (user.id !== req.user.id) {
-        //   return res.status(403).json({ message: 'Access denied. User does not have permission.' });
-        // }
-
         await user.populate('bookings');
-        console.log(user.bookings);
+        //console.log(user.bookings);
         return res.status(200).json(user.bookings);
       } catch (error) {
         console.log(error.message);
@@ -123,25 +101,56 @@ const myBookings = async (req, res) => {
     }
   };
 
-const getBookingsForGallery = async(req, res) =>{
-    try {
-        const id = `${req.params.gallery_id}`;
-        const gallery = await Gallery.findById(id);
+// const getBookingsForGallery = async(req, res) =>{
+//     try {
+//         const id = `${req.params.gallery_id}`;
+//         const gallery = await Gallery.findById(id);
 
-        if (!gallery) {
-        return res.status(404).json({ message: 'Gallery not found' });
-        }
+//         if (!gallery) {
+//         return res.status(404).json({ message: 'Gallery not found' });
+//         }
+//         await gallery.populate('bookings');
+//         return res.status(200).json(gallery.bookings);
+//       } catch (error) {
+//         console.log(error.message);
+//         res.status(500).send({ message: error.message });
+//       }
+// } 
 
-    // Populate the 'arts' field in the gallery with the actual art documents
-        await gallery.populate('bookings');
-        return res.status(200).json(gallery.bookings);
-      } catch (error) {
-        console.log(error.message);
-        res.status(500).send({ message: error.message });
-      }
-} 
+const getBookingsForGallery = async (req, res) => {
+  try {
+    const id = `${req.params.gallery_id}`;
+    const gallery = await Gallery.findById(id);
 
+    if (!gallery) {
+      return res.status(404).json({ message: 'Gallery not found' });
+    }
+    // Populate the bookings and user details within each booking
+    await gallery.populate({
+      path: 'bookings',
+      populate: {
+        path: 'user',
+        select: 'name', // Include only the 'name' field of the user
+      },
+    });
 
+    // Extract only the necessary information (e.g., user name) from each booking
+    const bookingsWithUserNames = gallery.bookings.map((booking) => {
+      return {
+        _id: booking._id,
+        date: booking.date,
+        status: booking.status,
+        user: booking.user ? booking.user.name : 'Unknown User',
+        // Add other fields as needed
+      };
+    });
+
+    return res.status(200).json(bookingsWithUserNames);
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).send({ message: error.message });
+  }
+};
 export{
     createBooking,
     editBooking,

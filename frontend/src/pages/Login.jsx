@@ -30,26 +30,16 @@ const Login = () => {
         console.log(response.data);
         const data = response.data;
         console.log(data);
-      //console.log(message);
         if (data) {
-          //handleSuccess(message);
+          localStorage.setItem('user', data)
+          
           setTimeout(() => {
             navigate("/");
           }, 1000);
         } else {
-          //handleError();
           console.log('Hi. I am your error')
           }
       });
-      // const { data } = await axios.post(
-      //   "http://localhost:5555/users/login",
-      //   {
-      //     email, password
-      //   },
-      //   { withCredentials: true }
-      // );
-      
-      //const { success, message } = data;
       
     } catch (error) {
       console.log(error);

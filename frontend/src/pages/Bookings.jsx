@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Spinner from '../components/Spinner';
-import { useCookies } from "react-cookie";
 import { Link, useNavigate } from 'react-router-dom';
-import Modal from '../components/Modal';
-import ModalPage from './ModalPage';
 import { AiOutlineEdit } from 'react-icons/ai';
 import { MdOutlineAddBox, MdOutlineDelete } from 'react-icons/md';
 import { useParams } from 'react-router-dom';
@@ -12,8 +9,6 @@ import { useParams } from 'react-router-dom';
 const Bookings = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [cookies, removeCookie] = useCookies([]);
-  const [modalShow, setModalShow] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate(); 
   const [user, setUser] = useState('');
@@ -56,15 +51,6 @@ const Bookings = () => {
     }
   };
 
-  const handleShowModal = () => {
-    setModalShow(false);
-  };
-
-  // Close modal
-  const handleCloseModal = () => {
-    setModalShow(false);
-  };
-
 
   return (
     <div className='p-4'>
@@ -79,7 +65,6 @@ const Bookings = () => {
       ) : (
         <div>
           <table className='w-full border-separate border-spacing-2'>
-            {/* ... Table header */}
             <thead>
             <tr>
               <th className='border border-slate-600 rounded ms'>Date</th>
@@ -96,8 +81,6 @@ const Bookings = () => {
                   <td className='border border-slate-700 rounded md text-center'>{booking.status}</td>
                   <td className='border border-slate-700 rounded md text-center'>
                     <div className='flex justify-center gap-x-4'>
-                      {/* Open modal on edit icon click */}
-                      
                       <Link to={`/bookings/edit/${booking._id}`}>
                         <AiOutlineEdit className='text-2xl text-yellow-600' />
                       </Link>
