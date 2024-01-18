@@ -20,9 +20,7 @@ const Arts = () => {
   useEffect(() => {
     setLoading(true);
     const token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/, '$1');
-    setIsLoggedIn(!!token);
-
-    
+    setIsLoggedIn(!!token);  
     axios
       .get(`http://localhost:5555/galleries/${id}`)
       .then((response) => {
@@ -72,7 +70,7 @@ const Arts = () => {
     <div className='p-4'>
       <div className='flex justify-between items-center'>
         <h1 className='text-3xl my-8'>{galleryTitle} Gallery </h1>
-        <button onClick={handlePlanVisit}>Plan a visit</button>
+        {!isAdmin && (<button className='p-2 bg-sky-300 m-8' onClick={handlePlanVisit}>Plan a visit</button>)}
         <Link to={`/bookings/gallery/${id}`}>
           {isAdmin && (
               <button>View bookings</button>
@@ -97,7 +95,7 @@ const Arts = () => {
             <tr>
               <th className='border border-slate-600 rounded ms'>Title</th>
               <th className='border border-slate-600 rounded ms'>Artist</th>
-              <th className='border border-slate-600 rounded ms'>Operations</th>
+              {isAdmin && (<th className='border border-slate-600 rounded ms'>Operations</th>)}
             </tr>
           </thead>
           <tbody>

@@ -55,35 +55,18 @@ const getUserFromToken = async (req, res, next) => {
   }
 };
 
-// const authorizeRoles = (...roles) => {
-  
-//   return (req, res, next) => {
-//     console.log(req.user)
-//     if (!roles.includes(req.user.role)) {
-//       return next(
-//         new ErrorHandler(
-//           `Role: ${req.user.role} is not allowed to access this resouce `,
-//           403
-//         )
-//       );
-//     }
-//     next();
-//   };
-// };
 const authorizeRoles = (...roles) => {
   return async (req, res, next) => {
     try {
       // Get token from cookies
       const token = req.cookies.token;
-      console.log(token)
       if (!token) {
         res.status(401).json({message: 'Not authorized, no token'});
       }
       // Verify the token and get user details
       const decoded = jwt.verify(token, JWT_SECRET);
-      console.log(decoded)
       const user = await User.findById(decoded.userId).select('-password');
-      console.log(user);
+      //console.log(user)
       if (!user) {
         // return next(
         //   new ErrorHandler('Not authorized, user not found', 401)
@@ -92,9 +75,6 @@ const authorizeRoles = (...roles) => {
       }
       // Check if user's role is allowed
       if (!roles.includes(user.role)) {
-        // return next(
-        //   new ErrorHandler(`Role: ${user.role} is not allowed to access this resource`, 403)
-        // );
         res.status(401).json({message: 'Not authorized to access this resource'});
       }
 
@@ -103,7 +83,6 @@ const authorizeRoles = (...roles) => {
       next();
     } catch (error) {
       console.log(error);
-      //res.status(401).json({ message: 'Not authorized, token failed' });
     }
   };
 };

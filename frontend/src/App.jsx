@@ -1,5 +1,5 @@
 import React from "react";
-import {Routes, Route} from 'react-router-dom'
+import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
 import Galleries from './pages/Galleries.jsx'
 import Arts from './pages/Arts.jsx';
 import CreateArt from './pages/CreateArts';
@@ -13,10 +13,15 @@ import CreateBooking from "./pages/CreateBooking.jsx";
 import EditBooking from "./pages/EditBooking.jsx";
 import GalleryBookings from "./pages/GalleryBookings.jsx";
 import Profile from "./pages/Profile.jsx";
+import Users from "./pages/Users.jsx";
+import Navbar from "./components/Navbar.jsx";
 
 const App = () => {
   return (
+    <>
+    <Navbar />
     <Routes>
+      
       <Route path='/' element={<Galleries />} />
       <Route path='/galleries/:id/arts' element={<Arts />} />
       <Route path='/arts/:gallery_id' element={<CreateArt />} />
@@ -30,7 +35,9 @@ const App = () => {
       <Route path='/bookings/edit/:id' element={<EditBooking />} />
       <Route path='/bookings/gallery/:id' element={<GalleryBookings />} />
       <Route path='/users/profile/:id' element={<Profile />} />
+      <Route path='/users/' element={<Users />} />
     </Routes>
+    </>
   )
 };
 

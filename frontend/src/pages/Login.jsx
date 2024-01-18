@@ -27,9 +27,9 @@ const Login = () => {
       },
       { withCredentials: true })
       .then((response) => {
-        console.log(response.data);
+        //console.log(response.data);
         const data = response.data;
-        console.log(data);
+        //console.log(data);
         if (data) {
           localStorage.setItem('user', data)
           

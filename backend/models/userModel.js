@@ -29,9 +29,9 @@ const userSchema = mongoose.Schema(
     }
   );
   
-  userSchema.pre("save", async function () {
-    this.password = await bcrypt.hash(this.password, 12);
-  });
+  // userSchema.pre("save", async function () {
+  //   this.password = await bcrypt.hash(this.password, 12);
+  // });
   
   // // Match user entered password to hashed password in database
   // userSchema.methods.matchPassword = async function (enteredPassword) {

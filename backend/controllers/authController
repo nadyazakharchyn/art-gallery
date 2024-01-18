@@ -4,19 +4,30 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { JWT_SECRET } from "../config.js";
 
+const getUsers = async (req, res) => {
+  try {
+      const users = await User.find({});
+      return res.status(200).json({
+        count: users.length,
+        data: users,
+      });
+    } catch (error) {
+      console.log(error.message);
+      res.status(500).send({ message: error.message });
+    }
+}
 
 const authUser = async (req, res) => {
   const { email, password } = req.body;
-  //console.log(password);
+  console.log(email, password)
   try{
     const user = await User.findOne({ email });
-    console.log(user.password)
+    console.log(user);
     if (!user) {
       return res.status(401).json({ error: 'Incorrect password or email' });
     }
-
     const passwordMatch = await bcrypt.compare(password, user.password);
-    console.log(passwordMatch)
+    console.log(passwordMatch);
     if (!passwordMatch) {
       return res.status(401).json({ error: 'Incorrect password or email' });
     }
@@ -39,7 +50,6 @@ const getUserFromToken = async (req, res, next) => {
   token = req.cookies.token; // Retrieve the token from the 'token' cookie
   //token = req.params.token;
   console.log(token); // Log the token for debugging purposes
-
   if (token) {
     try {
       const decoded = jwt.verify(token, JWT_SECRET);
@@ -52,8 +62,6 @@ const getUserFromToken = async (req, res, next) => {
       if (!user) {
         return res.status(401).json({ message: 'Not authorized, user not found' });
       }
-      // Attach the user object to the request object
-      //req.user = user;
       console.log(user)
       res.json({user})
       next();
@@ -72,14 +80,13 @@ const registerUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
     const role = "user";
-    
     const userExists = await User.findOne({ email });
-    console.log(userExists);
     if (userExists) {
       res.status(400);
       throw new Error('User already exists');
     }
-    const user = new User({ name, email, password, role });
+    const hashedPassword = await bcrypt.hash(password, 12);
+    const user = new User({ name, email, password: hashedPassword, role });
     await user.save();
     res.status(201).json({ message: 'Registration successful' });
   } catch (error) {
@@ -142,5 +149,6 @@ export {
   logoutUser,
   getUserProfile,
   updateUserProfile,
-  getUserFromToken
+  getUserFromToken,
+  getUsers
 };

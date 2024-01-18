@@ -5,12 +5,14 @@ import {
   logoutUser,
   getUserProfile,
   updateUserProfile,
-  getUserFromToken
+  getUserFromToken,
+  getUsers
 } from '../controllers/authController';
 import { protect, authorizeRoles } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
+router.route('/').get(authorizeRoles("admin"), getUsers);
 router.post('/register', registerUser);
 router.post('/login', authUser);
 router.post('/logout', logoutUser);

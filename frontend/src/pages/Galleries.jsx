@@ -5,47 +5,12 @@ import { Link } from 'react-router-dom';
 import { BsInfoCircle } from 'react-icons/bs';
 import { FaUser } from 'react-icons/fa';
 
-// const Galleries = () => {
-//     const [galleries, setGalleries] = useState([]);
-//     const [loading, setLoading] = useState(false);
-//     const [isLoggedIn, setIsLoggedIn] = useState(false);
-//     const [user, setUser] = useState('');
-//     useEffect(() => {
-//       const {token} = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/, '$1');
-//       console.log(token)
-//       setIsLoggedIn(!!token);
-//       setLoading(true);
-//       axios
-//         .get(`http://localhost:5555/users/user/${token}`, {headers: {
-//           Authorization: `Bearer ${token}`,
-//         },})
-//         .then((response) => {
-//             const { user } = response.data;
-//             setUser(user);
-            
-//             setLoading(false);
-//         })
-//         .catch((error) => {
-//           console.log(error);
-//           setLoading(false);
-//         });
-//       axios
-//         .get('http://localhost:5555/galleries')
-//         .then((response) => {
-//             setGalleries(response.data.data);
-//           setLoading(false);
-//         })
-//         .catch((error) => {
-//           console.log(error);
-//           setLoading(false);
-//         });
-//     }, []);
 const Galleries = () => {
   const [galleries, setGalleries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState('');
-
+  const [isAdmin, setisAdmin] = useState(false);
   useEffect(() => {
     const token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/, '$1');
     setIsLoggedIn(!!token);
@@ -56,6 +21,9 @@ const Galleries = () => {
           { withCredentials: true });
 
         const { user } = response.data;
+        if (user.role === 'admin') {
+          setisAdmin(true)
+        };
         setUser(user);
         //console.log(user);
       } catch (error) {
@@ -83,43 +51,11 @@ const Galleries = () => {
     window.location.href = '/users/login';
   };
 
-    return (
-      
+    return (    
       <div className='p-4'>
+        
         <div className='flex justify-between items-center'>
-        <h1 className='text-3xl my-8'>Our galleries</h1>
-        <Link to={`/users/login`}> 
-          {!isLoggedIn && (
-            <Link to={`/users/login`} className='p-2 bg-sky-300 m-8'>Login</Link>
-          )}
-        </Link >
-        <Link to={`/users/profile/${user._id}`}> 
-          {isLoggedIn && (
-            // Render the user profile icon if the user is logged in
-            <FaUser className='text-2xl text-blue-500' />
-          )}
-        </Link >
-        <Link to={`/users/logout/`}> 
-          {isLoggedIn && (
-            // Render the user profile icon if the user is logged in
-            <button onClick={handleLogout}>Logout</button>
-          )}
-        </Link >
-        <Link to={`/bookings/user/${user._id}`}> 
-          {isLoggedIn && (
-            // Render the user profile icon if the user is logged in
-            <button>Bookings</button>
-          )}
-        </Link >
-        {/* {!isLoggedIn ? (
-          // Show the "Login" button if user is not logged in
-          <Link to={`/users/login`} className='p-2 bg-sky-300 m-8'>Login</Link>
-        ) : (
-          // Show the user icon if user is logged in
-          <Link to={`/users/profile/${user._id}`}>
-            <FaUser className='text-2xl text-blue-500' />
-          </Link>
-        )} */}
+          <h1 className='text-3xl my-8'>Our galleries</h1>
         </div>
         {loading ? (
           <Spinner />

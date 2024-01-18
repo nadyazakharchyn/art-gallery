@@ -10,6 +10,7 @@ import { useParams } from 'react-router-dom';
 
 const GalleryBookings = () => {
   const [bookings, setBookings] = useState([]);
+  const [galleryTitle, setGalleryTitle] = useState('');
   const [loading, setLoading] = useState(false);
   const { id } = useParams();
   const navigate = useNavigate(); 
@@ -19,18 +20,20 @@ const GalleryBookings = () => {
     axios
       .get(`http://localhost:5555/bookings/gallery/${id}/`, { withCredentials: true })
       .then( (response) => {
-        // const bookingsWithUsers = await Promise.all(
-        //   response.data.map(async (booking) => {
-        //     const userDetails = await getUserDetails(booking.user);
-        //     return { ...booking, user: userDetails.name };
-        //   })
-        // );
         setBookings(response.data);
         setLoading(false);
       })
       .catch((error) => {
         console.log(error);
         setLoading(false);
+      });
+    axios
+      .get(`http://localhost:5555/galleries/${id}`)
+      .then((response) => {
+        setGalleryTitle(response.data.title);
+      })
+      .catch((error) => {
+        console.log(error);
       });
 
   }, [id]);
@@ -45,15 +48,13 @@ const GalleryBookings = () => {
     }
   };
 
-
-
   return (
     <div className='p-4'>
       <div className='flex justify-between items-center'>
-        <h1 className='text-3xl my-8'>Gallery bookings</h1>
-        <Link to={`/bookings/${id}`}>
+        <h1 className='text-3xl my-8'>Bookings for {galleryTitle} gallery</h1>
+        {/* <Link to={`/bookings/${id}`}>
           <MdOutlineAddBox className='text-sky-800 text-4xl' />
-        </Link>
+        </Link> */}
       </div>
       {loading ? (
         <Spinner />
